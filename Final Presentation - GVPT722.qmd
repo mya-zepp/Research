@@ -1,0 +1,160 @@
+---
+title: "Political Consequences of The Prison Industrial Compex"
+author: "Mya Zepp"
+format: revealjs
+theme: simple
+editor: visual
+css: style.css
+---
+
+## Disenfranchisement Laws in The United States
+
+```{r}
+library(usmap)
+library(leaflet)
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(broom)
+library(dplyr)
+library(usmap)
+library(modelsummary)
+library(poliscidata)
+
+disenfran_laws <- read_csv(
+  here::here("disenfranchisement_laws_data.csv")
+)
+
+colnames(disenfran_laws) <- c("state", "value")
+
+disenfran_laws$state <- tolower(disenfran_laws$state)
+
+
+disenfran_laws$value <- as.factor(disenfran_laws$value)
+
+plot_usmap(data = disenfran_laws, values = "value") +
+  scale_fill_manual(
+    values = c("orange", "red", "darkred", "purple", "darkblue", "blue"),
+    labels = c(
+      "No disenfranchisement",
+      "Voting rights restored upon release",
+      "Voting rights restored for those on probation or parole 
+who have not been incarcerated in the last 5 years",
+      "Voting rights restored after completion of sentence 
+(including probation or parole)",
+      "Permanent disenfranchisement for some",
+      "Permanent disenfranchisement for all"
+    )
+  ) +
+  theme_minimal() +  
+  theme(
+    legend.position = "right",
+    panel.grid = element_blank(), 
+    panel.background = element_blank(), 
+    axis.ticks = element_blank(),  
+    axis.text = element_blank()  
+  ) +
+  labs(
+    title = "Disenfranchisement Laws in the United States",
+    caption = "Source: Brennan Center for Justice, 2024"
+  )
+```
+
+# To what extent does prison time impact an individual's feelings about politics and their desire to vote?
+
+## Hypothesis
+
+$$H_0$$ Prison time has no impact on an individuals feelings about politics and their desire to vote
+
+$$H_1$$ Prison time negatively impacts an individuals feelings about politics and their desire to vote
+
+## Data
+
+::: incremental
+-   2020 Marshall Project and Slate Survey of 8,000 incarcerated individuals across Arkansas, California, Illinois, Kansas, Montana, Maine
+
+-   Respondents:
+
+    -   3,873 White
+    -   974 Black
+    -   435 Hispanic
+
+-   The survey, being the first of its kind has many limitations
+:::
+
+## Trust in Political Officials
+
+```{r}
+prison_data <- read_csv(
+  here::here("incarcerated_survey_2019.csv")
+) |>
+  drop_na()
+
+prison_data <- prison_data |>
+  mutate(
+    how_often_officials_acting_in_your_interest = case_when(
+      how_often_officials_acting_in_your_interest %in% c("Always", "Very Often") ~ 1,
+      how_often_officials_acting_in_your_interest %in% c("Never", "Rarely") ~ 0,
+      TRUE ~ NA_real_
+    )
+  ) |>
+  drop_na(how_often_officials_acting_in_your_interest, length_in_this_facility) 
+
+ggplot(prison_data, aes(x = how_often_officials_acting_in_your_interest)) +
+  geom_bar(fill = "blue") +
+  labs(
+    title = "Trust in Political Officials",
+    x = "How often are officials acting in your interest",
+    y = "Count"
+  ) +
+   theme_minimal() +
+  theme(legend.position = "top")
+
+
+```
+
+## Regression Equation
+
+$$
+Motivation to Vote = \alpha + \beta_1T + \beta_2Length in Facility + \epsilon
+$$
+
+## Results
+
+```{r}
+prison_data <- read_csv(
+  here::here("incarcerated_survey_2019.csv")
+) |>
+  drop_na()
+  
+prison_cleaned <- prison_data |>
+  filter(!is.na(length_in_this_facility)) |>
+  filter(!is.na(incarceration_impacts_motivation_to_vote))
+
+
+prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 1, 0)
+#1 = ten years or less
+
+prison_cleaned$age <- ifelse(prison_cleaned$age == "35 or younger", 1, 0)
+
+prison_cleaned$identifies_as_black <-  ifelse(prison_cleaned$identifies_as_black == "TRUE", 1, 0)
+
+prison_cleaned$identifies_as_white <-  ifelse(prison_cleaned$identifies_as_white == "TRUE", 1, 0)
+
+prison_cleaned$identifies_as_hispanic_or_latinx <-  ifelse(prison_cleaned$identifies_as_hispanic_or_latinx == "TRUE", 1, 0)
+
+prison_cleaned <- prison_cleaned %>%
+  mutate(incarceration_impacts_motivation_to_vote = case_when(
+    incarceration_impacts_motivation_to_vote %in% c("Increased my motivation to vote", "Slightly increased my motivation to vote") ~ 1, incarceration_impacts_motivation_to_vote %in% c("No impact", "Decreased my motivation to vote",  "Slightly decreased my motivation to vote") ~ 0
+  )) 
+
+mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + identifies_as_white + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
+
+tidy(mod)
+
+##need to add figures on a plot with predicted points
+```
+
+## Conclusion
+
+-   More time spent in prison is associated with a decreased motivation to vote
