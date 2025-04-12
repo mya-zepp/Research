@@ -1,0 +1,20 @@
+.reveal .footer {
+    font-size: 14px;
+    color: #000;
+    text-align: center;
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+}
+
+.reveal .footer {
+    color: #000;
+    background-color: $custom-background;
+    display: block;
+    position: fixed;
+    padding-bottom: 12px;
+    padding-top: 12px;
+    bottom: 0px !important; // Makes footer div flush with bottom of slide
+    width: 100%;
+    z-index: 2 !important; // Sets the footer div further down the z-index
+  }
