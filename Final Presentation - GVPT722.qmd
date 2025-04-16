@@ -116,7 +116,7 @@ ggplot(prison_data, aes(x = how_often_officials_acting_in_your_interest)) +
 ## Regression Equation
 
 $$
-Motivation to Vote = \alpha + \beta_1T +\beta_2*Length in Facility + \beta_3 * Identifies As White + \beta_4 * Identifies As Hispanic or Latino + \beta_5 * Identifies As Black + \beta_6* Age +\epsilon
+Motivation to Vote = \alpha + \beta_1T +\beta_2*Length in Facility + \beta_3 * Ever Voted + \beta_4 * Identifies As Hispanic or Latino + \beta_5 * Identifies As Black + \beta_6* Age +\epsilon
 $$
 
 ## Results
@@ -133,7 +133,6 @@ prison_cleaned <- prison_data |>
 
 
 prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 1, 0)
-#1 = ten years or less
 
 prison_cleaned$age <- ifelse(prison_cleaned$age == "35 or younger", 1, 0) 
 
@@ -143,30 +142,40 @@ prison_cleaned$identifies_as_white <-  ifelse(prison_cleaned$identifies_as_white
 
 prison_cleaned$identifies_as_hispanic_or_latinx <-  ifelse(prison_cleaned$identifies_as_hispanic_or_latinx == "TRUE", 1, 0)
 
+prison_cleaned$ever_voted <-  ifelse(prison_cleaned$ever_voted == "Yes", 1, 0)
+
 prison_cleaned <- prison_cleaned %>%
   mutate(incarceration_impacts_motivation_to_vote = case_when(
     incarceration_impacts_motivation_to_vote %in% c("Increased my motivation to vote", "Slightly increased my motivation to vote") ~ 1, incarceration_impacts_motivation_to_vote %in% c("No impact", "Decreased my motivation to vote",  "Slightly decreased my motivation to vote") ~ 0
   )) 
 
-mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + identifies_as_white + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
+mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
 
-#tidy(mod)
+tidy(mod)
 
 modelsummary(mod,
              title = "Impact of Incarceration on Voting Motivation",
              coef_map = c(
                "length_in_this_facility" = "Length in Facility",
+               "ever_voted" = "Voted in the past",
                "identifies_as_white" = "White",
                "identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
                "identifies_as_black" = "Black",
                "age" = "Age"
              ),
-             stars = TRUE,
-             statistic = "std.error",
+             stars = TRUE
           
 )
 
 ##need to add figures on a plot with predicted points
+```
+
+## Results
+
+```{r}
+library(marginaleffects)
+
+plot_predictions(mod, )
 ```
 
 ## Conclusion
