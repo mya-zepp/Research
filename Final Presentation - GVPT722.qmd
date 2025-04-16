@@ -135,7 +135,7 @@ prison_cleaned <- prison_data |>
 prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 1, 0)
 #1 = ten years or less
 
-prison_cleaned$age <- ifelse(prison_cleaned$age == "35 or younger", 1, 0)
+prison_cleaned$age <- ifelse(prison_cleaned$age == "35 or younger", 1, 0) 
 
 prison_cleaned$identifies_as_black <-  ifelse(prison_cleaned$identifies_as_black == "TRUE", 1, 0)
 
