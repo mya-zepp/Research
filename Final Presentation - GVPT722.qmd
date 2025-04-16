@@ -116,7 +116,7 @@ ggplot(prison_data, aes(x = how_often_officials_acting_in_your_interest)) +
 ## Regression Equation
 
 $$
-Motivation to Vote = \alpha + \beta_1T + \beta_2Length in Facility + \epsilon
+Motivation to Vote = \alpha + \beta_1T +\beta_2*Length in Facility + \beta_3 * Identifies As White + \beta_4 * Identifies As Hispanic or Latino + \beta_5 * Identifies As Black + \beta_6* Age +\epsilon
 $$
 
 ## Results
@@ -150,7 +150,21 @@ prison_cleaned <- prison_cleaned %>%
 
 mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + identifies_as_white + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
 
-tidy(mod)
+#tidy(mod)
+
+modelsummary(mod,
+             title = "Impact of Incarceration on Voting Motivation",
+             coef_map = c(
+               "length_in_this_facility" = "Length in Facility",
+               "identifies_as_white" = "White",
+               "identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
+               "identifies_as_black" = "Black",
+               "age" = "Age"
+             ),
+             stars = TRUE,
+             statistic = "std.error",
+          
+)
 
 ##need to add figures on a plot with predicted points
 ```
