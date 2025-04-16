@@ -132,7 +132,7 @@ prison_cleaned <- prison_data |>
   filter(!is.na(incarceration_impacts_motivation_to_vote))
 
 
-prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 1, 0)
+prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "Over 10 years", 1, 0)
 
 prison_cleaned$age <- ifelse(prison_cleaned$age == "35 or younger", 1, 0) 
 
@@ -163,7 +163,8 @@ modelsummary(mod,
                "identifies_as_black" = "Black",
                "age" = "Age"
              ),
-             stars = TRUE
+             stars = TRUE,
+             gof_map = c("nobs", "r.squared")
           
 )
 
@@ -175,7 +176,7 @@ modelsummary(mod,
 ```{r}
 library(marginaleffects)
 
-plot_predictions(mod, )
+plot_predictions(mod, condition = "length_in_this_facility")
 ```
 
 ## Conclusion
