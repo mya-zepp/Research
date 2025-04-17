@@ -117,10 +117,10 @@ ggplot(prison_data, aes(x = how_often_officials_acting_in_your_interest)) +
 ## Regression Equation
 
 $$
-Motivation to Vote = \alpha + \beta_1T +\beta_2*Length in Facility + \beta_3 * Ever Voted + \beta_4 * Identifies As Hispanic or Latino + \beta_5 * Identifies As Black + \beta_6* Age +\epsilon
+Motivation to Vote = \alpha + \beta_1T +\beta_2*Length in Facility \\ + \beta_3 * Ever Voted + \beta_4 * Latino + \beta_5 * Black \\ + \beta_6* Age + \beta_7* Party + \epsilon
 $$
 
-## Results
+## Results {.smaller}
 
 ```{r}
 prison_data <- read_csv(
@@ -221,9 +221,7 @@ p
 
 ## Conclusion
 
-::: incremental
 -   There is a relationship between low motivation to vote and time in prison, but unlike I predicted that relationship is among those who have spent 10 years or less in prison (who make up the majority of the sample)
 -   Having voted in the past increases ones likelihood to have high motivation to vote again in the future
 -   Black respondents also have a higher likelihood to have a high motivation to vote
 -   The results tell a story that says we need more data.
-:::
