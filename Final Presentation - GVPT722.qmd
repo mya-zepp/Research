@@ -105,7 +105,6 @@ prison_data <- prison_data |>
 ggplot(prison_data, aes(x = how_often_officials_acting_in_your_interest)) +
   geom_bar(fill = "blue") +
   labs(
-    title = "Trust in Political Officials",
     x = "How often are officials acting in your interest",
     y = "Count"
   ) +
@@ -131,12 +130,14 @@ prison_data <- read_csv(
   
 prison_cleaned <- prison_data |>
   filter(!is.na(length_in_this_facility)) |>
-  filter(!is.na(incarceration_impacts_motivation_to_vote))
+  filter(!is.na(incarceration_impacts_motivation_to_vote)) 
 
 
-prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 1, 0)
+prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 0, 1)
+#more time = 1
 
-prison_cleaned$age <- ifelse(prison_cleaned$age == "35 or younger", 1, 0) 
+prison_cleaned$age <- ifelse(prison_cleaned$age == "36 or older", 1, 0)
+#old = 1
 
 prison_cleaned$identifies_as_black <-  ifelse(prison_cleaned$identifies_as_black == "TRUE", 1, 0)
 
@@ -160,7 +161,17 @@ prison_cleaned <- prison_cleaned %>%
     incarceration_impacts_motivation_to_vote %in% c("Increased my motivation to vote", "Slightly increased my motivation to vote") ~ 1, incarceration_impacts_motivation_to_vote %in% c("No impact", "Decreased my motivation to vote",  "Slightly decreased my motivation to vote") ~ 0
   )) 
 
-mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + how_often_officials_acting_in_your_interest, data = prison_cleaned)
+prison_cleaned <- prison_cleaned %>%
+  filter(party %in% c("The Democratic party", "The Republican party", "Independent")) %>%
+  mutate(party = case_when(
+    party == "Independent" ~ 2,
+    party == "The Democratic party" ~ 1,
+    party == "The Republican party" ~ 0
+  ))
+
+unique(prison_cleaned$party)
+
+mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + party, data = prison_cleaned)
 
 ##mod_1 <- lm(how_often_officials_acting_in_your_interest ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
 
@@ -178,14 +189,17 @@ modelsummary(mod,
                "identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
                "identifies_as_black" = "Black",
                "age" = "Age",
-               "how_often_officials_acting_in_your_interest" = "Politicians are acting in your interest"
+               "how_often_officials_acting_in_your_interest" = "Politicians are acting in your interest",
+               "party" = "Party"
              ),
              stars = TRUE,
              gof_map = c("nobs", "r.squared")
           
 )
 
+
 ##need to add figures on a plot with predicted points
+## add party identification
 ```
 
 ## Results
@@ -193,9 +207,23 @@ modelsummary(mod,
 ```{r}
 library(marginaleffects)
 
-plot_predictions(mod, condition = "length_in_this_facility")
+p <- plot_predictions(mod, condition = "length_in_this_facility") +
+  labs(
+    title = "Predicted Impact of Length in Facility on Voting Motivation",
+    x = "Length in Facility (Binary: 1 = Over 10 Years)",
+    y = "Predicted Probability of Increased Motivation",
+    caption = "Source: The Marshall Project"
+  ) +
+  theme_minimal()
+
+p
 ```
 
 ## Conclusion
 
--   More time spent in prison is associated with a decreased motivation to vote
+::: incremental
+-   There is a relationship between low motivation to vote and time in prison, but unlike I predicted that relationship is among those who have spent 10 years or less in prison (who make up the majority of the sample)
+-   Having voted in the past increases ones likelihood to have high motivation to vote again in the future
+-   Black respondents also have a higher likelihood to have a high motivation to vote
+-   The results tell a story that says we need more data.
+:::
