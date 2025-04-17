@@ -71,7 +71,9 @@ $$H_1$$ Prison time negatively impacts an individuals feelings about politics an
 ## Data
 
 ::: incremental
--   2020 Marshall Project and Slate Survey of 8,000 incarcerated individuals across Arkansas, California, Illinois, Kansas, Montana, Maine
+-   2020 Marshall Project and Slate Survey of 8,000 incarcerated individuals across Arkansas, California, Illinois, Kansas, Montana, Maine (most respondents are in Kansas or Arkansas)
+
+    -   2411 usable responses
 
 -   Respondents:
 
@@ -132,13 +134,22 @@ prison_cleaned <- prison_data |>
   filter(!is.na(incarceration_impacts_motivation_to_vote))
 
 
-prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "Over 10 years", 1, 0)
+prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 1, 0)
 
 prison_cleaned$age <- ifelse(prison_cleaned$age == "35 or younger", 1, 0) 
 
 prison_cleaned$identifies_as_black <-  ifelse(prison_cleaned$identifies_as_black == "TRUE", 1, 0)
 
 prison_cleaned$identifies_as_white <-  ifelse(prison_cleaned$identifies_as_white == "TRUE", 1, 0)
+
+prison_cleaned <- prison_cleaned |>
+  mutate(
+    how_often_officials_acting_in_your_interest = case_when(
+      how_often_officials_acting_in_your_interest %in% c("Always", "Very Often") ~ 1,
+      how_often_officials_acting_in_your_interest %in% c("Never", "Rarely") ~ 0,
+      TRUE ~ NA_real_
+    )
+  )
 
 prison_cleaned$identifies_as_hispanic_or_latinx <-  ifelse(prison_cleaned$identifies_as_hispanic_or_latinx == "TRUE", 1, 0)
 
@@ -149,9 +160,14 @@ prison_cleaned <- prison_cleaned %>%
     incarceration_impacts_motivation_to_vote %in% c("Increased my motivation to vote", "Slightly increased my motivation to vote") ~ 1, incarceration_impacts_motivation_to_vote %in% c("No impact", "Decreased my motivation to vote",  "Slightly decreased my motivation to vote") ~ 0
   )) 
 
-mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
+mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + how_often_officials_acting_in_your_interest, data = prison_cleaned)
 
-tidy(mod)
+##mod_1 <- lm(how_often_officials_acting_in_your_interest ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
+
+##summary(mod_1)
+
+
+#tidy(mod)
 
 modelsummary(mod,
              title = "Impact of Incarceration on Voting Motivation",
@@ -161,7 +177,8 @@ modelsummary(mod,
                "identifies_as_white" = "White",
                "identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
                "identifies_as_black" = "Black",
-               "age" = "Age"
+               "age" = "Age",
+               "how_often_officials_acting_in_your_interest" = "Politicians are acting in your interest"
              ),
              stars = TRUE,
              gof_map = c("nobs", "r.squared")
