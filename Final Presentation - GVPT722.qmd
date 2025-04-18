@@ -73,7 +73,7 @@ $$H_1$$ Prison time negatively impacts an individuals feelings about politics an
 ::: incremental
 -   2020 Marshall Project and Slate Survey of 8,000 incarcerated individuals across Arkansas, California, Illinois, Kansas, Montana, Maine (most respondents are in Kansas or Arkansas)
 
-    -   2411 usable responses
+    -   2157 usable responses
 
 -   Respondents:
 
@@ -185,10 +185,9 @@ modelsummary(mod,
              coef_map = c(
                "length_in_this_facility" = "Length in Facility",
                "ever_voted" = "Voted in the past",
-               "identifies_as_white" = "White",
-               "identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
-               "identifies_as_black" = "Black",
-               "age" = "Age",
+               #"identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
+              # "identifies_as_black" = "Black",
+              # "age" = "Age",
                "how_often_officials_acting_in_your_interest" = "Politicians are acting in your interest",
                "party" = "Party"
              ),
