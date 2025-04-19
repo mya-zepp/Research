@@ -1,5 +1,5 @@
 ---
-title: "Political Consequences of The Prison Industrial Compex"
+title: "Political Consequences of The Prison Industrial Complex"
 author: "Mya Zepp"
 format: revealjs
 theme: simple
@@ -77,9 +77,9 @@ $$H_1$$ Prison time negatively impacts an individuals feelings about politics an
 
 -   Respondents:
 
-    -   3,873 White
-    -   974 Black
-    -   435 Hispanic
+    -   1,859 White
+    -   272 Black
+    -   26 Hispanic
 
 -   The survey, being the first of its kind has many limitations
 :::
@@ -196,7 +196,6 @@ modelsummary(mod,
           
 )
 
-
 ##need to add figures on a plot with predicted points
 ## add party identification
 ```
@@ -221,6 +220,24 @@ p
 ## Conclusion
 
 -   There is a relationship between low motivation to vote and time in prison, but unlike I predicted that relationship is among those who have spent 10 years or less in prison (who make up the majority of the sample)
+
 -   Having voted in the past increases ones likelihood to have high motivation to vote again in the future
--   Black respondents also have a higher likelihood to have a high motivation to vote
+
+-   Party plays a big role and Democrats, in this data, have lower motivation to vote
+
 -   The results tell a story that says we need more data.
+
+## Appendix  {.smaller}
+
+```{r}
+mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + party, data = prison_cleaned)
+
+summary(mod)
+```
+
+## Sources 
+
+“Can People Convicted of a Felony Vote?” Brennan Center for Justice, 16 Oct. 2024, www.brennancenter.org/our-work/research-reports/can-people-convicted-felony-vote
+
+Lewis, Nicole, et al. “We Asked 8,000 Incarcerated People What They Think about Politics.” The Marshall Project, The Marshall Project, 11 Mar. 2020,\
+www.themarshallproject.org/2020/03/11/what-do-we-really-know-about-the-politics-of-people-behind-bars
