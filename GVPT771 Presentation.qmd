@@ -1,0 +1,74 @@
+---
+title: "GVPT771 Presentation"
+author: "Mya Zepp"
+format: revealjs
+theme: simple
+editor: visual
+---
+
+## Disenfranchisement Laws in The United States
+
+```{r}
+library(usmap)
+library(leaflet)
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(broom)
+library(dplyr)
+library(usmap)
+library(modelsummary)
+library(poliscidata)
+library(ggpattern)
+
+disenfran_laws <- read_csv(
+  here::here("disenfranchisement_laws_data.csv")
+)
+
+colnames(disenfran_laws) <- c("state", "value")
+
+disenfran_laws$state <- tolower(disenfran_laws$state)
+
+
+disenfran_laws$value <- as.factor(disenfran_laws$value)
+
+plot_usmap(data = disenfran_laws, values = "value") +
+  scale_fill_manual(
+    values = c("orange", "red", "darkred", "purple", "darkblue", "blue"),
+    labels = c(
+      "No disenfranchisement",
+      "Voting rights restored upon release",
+      "Voting rights restored for those on probation or parole 
+who have not been incarcerated in the last 5 years",
+      "Voting rights restored after completion of sentence 
+(including probation or parole)",
+      "Permanent disenfranchisement for some",
+      "Permanent disenfranchisement for all"
+    )
+  ) +
+  theme_minimal() +  
+  theme(
+    legend.position = "right",
+    panel.grid = element_blank(), 
+    panel.background = element_blank(), 
+    axis.ticks = element_blank(),  
+    axis.text = element_blank()  
+  ) +
+  labs(
+    title = "Disenfranchisement Laws in the United States",
+    caption = "Source: Brennan Center for Justice, 2024"
+  )
+```
+
+## Existing Literature 
+
+-   “If there are more than 4 million people who are legally disenfranchised, there may be an equal number who believe they are ineligible to vote, thus depressing registration and voting participation.” (Drucker and Barreras, p. 10)
+-   Output from executable code
+
+## Hypothesis
+
+## Data
+
+```{r}
+1 + 1
+```

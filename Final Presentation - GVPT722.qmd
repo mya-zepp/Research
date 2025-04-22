@@ -20,6 +20,7 @@ library(dplyr)
 library(usmap)
 library(modelsummary)
 library(poliscidata)
+library(ggpattern)
 
 disenfran_laws <- read_csv(
   here::here("disenfranchisement_laws_data.csv")
@@ -227,7 +228,7 @@ p
 
 -   The results tell a story that says we need more data.
 
-## Appendix  {.smaller}
+## Appendix {.smaller}
 
 ```{r}
 mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + party, data = prison_cleaned)
@@ -235,7 +236,7 @@ mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + e
 summary(mod)
 ```
 
-## Sources 
+## Sources
 
 “Can People Convicted of a Felony Vote?” Brennan Center for Justice, 16 Oct. 2024, www.brennancenter.org/our-work/research-reports/can-people-convicted-felony-vote
 
