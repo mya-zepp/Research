@@ -72,6 +72,8 @@ who have not been incarcerated in the last 5 years",
 -   “Custodial interactions negatively affect the likelihood of participating in politics and carrying out the responsibilities of citizenship.” (Weaver and Lerman, 2010, p. 818)
 -   "The system of confinement is highly effective at keeping people separated, at breaking the possibility of meaningful relationships” (Pearson, 2024, p.56)
 
+# To what extent does prison time impact an individual's feelings about politics and their desire to vote?
+
 ## Hypothesis
 
 $$H_0$$ Prison time has no impact on an individuals feelings about politics and their desire to vote
@@ -168,3 +170,9 @@ modelsummary(mod,
           
 )
 ```
+
+## Discussion of Results
+
+## Conclusion
+
+## Sources 
