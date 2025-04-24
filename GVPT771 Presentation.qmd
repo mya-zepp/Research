@@ -6,11 +6,31 @@ theme: simple
 editor: visual
 ---
 
+## Table of Contents
+
+-   Research question
+
+-   Definitions
+
+-   Context
+
+-   Existing literature
+
+-   Hypothesis
+
+-   Data
+
+-   Results
+
+-   Conclusion
+
+# To what extent does prison time impact an individual's feelings about politics and their desire to vote?
+
 ## Definitions
 
--   Disenfranchisement
+-   Disenfranchisement - the action of taking away a persons right to vote
 
--   Prison Industrial Complex
+-   Prison Industrial Complex - a multi-billion dollar system of confinement with nearly 2 million people currently imprisoned
 
 ## Disenfranchisement Laws in The United States
 
@@ -66,13 +86,16 @@ who have not been incarcerated in the last 5 years",
   )
 ```
 
-## Existing Literature
+## Existing Literature {.smaller}
 
--   “If there are more than 4 million people who are legally disenfranchised, there may be an equal number who believe they are ineligible to vote, thus depressing registration and voting participation.” (Drucker and Barreras, 2005, p. 10)
--   “Custodial interactions negatively affect the likelihood of participating in politics and carrying out the responsibilities of citizenship.” (Weaver and Lerman, 2010, p. 818)
--   "The system of confinement is highly effective at keeping people separated, at breaking the possibility of meaningful relationships” (Pearson, 2024, p.56)
+-   Decrease in mobilization
 
-# To what extent does prison time impact an individual's feelings about politics and their desire to vote?
+    -   “If there are more than 4 million people who are legally disenfranchised, there may be an equal number who believe they are ineligible to vote.” (Drucker and Barreras, 2005, p. 10)
+    -   “Custodial interactions negatively affect the likelihood of participating in politics and carrying out the responsibilities of citizenship.” (Weaver and Lerman, 2010, p. 818)
+
+-   Increase in mobilization
+
+    -   “While it is true that punitive policy communicates to those it targets that they are second-class citizens, it does not follow that individuals surrender a desire to create change, or the belief that it is possible. Instead, skepticism toward government may shape the nature of political involvement, modifying how and when individuals choose to act.” (Walker, 2020, p. 5)
 
 ## Hypothesis
 
@@ -143,7 +166,7 @@ prison_cleaned <- prison_cleaned %>%
     party == "The Republican party" ~ 0
   ))
 
-unique(prison_cleaned$party)
+#unique(prison_cleaned$party)
 
 mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + party, data = prison_cleaned)
 
@@ -171,8 +194,19 @@ modelsummary(mod,
 )
 ```
 
-## Discussion of Results
-
 ## Conclusion
 
-## Sources 
+-   There is a relationship between low motivation to vote and time in prison, but unlike I predicted that relationship is among those who have spent 10 years or less in prison (who make up the majority of the sample)
+
+-   Having voted in the past increases ones likelihood to have high motivation to vote again in the future
+
+-   Party plays a big role and Democrats, in this data, have lower motivation to vote
+
+-   The results tell a story that says we need more data
+
+## Sources {.smaller}
+
+“Can People Convicted of a Felony Vote?” Brennan Center for Justice, 16 Oct. 2024, www.brennancenter.org/our-work/research-reports/can-people-convicted-felony-vote
+
+Lewis, Nicole, et al. “We Asked 8,000 Incarcerated People What They Think about Politics.” The Marshall Project, The Marshall Project, 11 Mar. 2020,\
+www.themarshallproject.org/2020/03/11/what-do-we-really-know-about-the-politics-of-people-behind-bars
