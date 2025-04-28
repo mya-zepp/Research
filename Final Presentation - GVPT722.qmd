@@ -19,7 +19,6 @@ library(broom)
 library(dplyr)
 library(usmap)
 library(modelsummary)
-library(poliscidata)
 library(ggpattern)
 
 disenfran_laws <- read_csv(
