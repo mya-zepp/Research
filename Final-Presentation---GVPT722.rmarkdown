@@ -7,7 +7,11 @@ editor: visual
 css: style.css
 ---
 
+
+
 ## Disenfranchisement Laws in The United States
+
+
 
 ```{r}
 library(usmap)
@@ -60,6 +64,8 @@ who have not been incarcerated in the last 5 years",
   )
 ```
 
+
+
 # To what extent does prison time impact an individual's feelings about politics and their desire to vote?
 
 ## Hypothesis
@@ -86,6 +92,8 @@ $$H_1$$ Prison time negatively impacts an individuals feelings about politics an
 
 ## Trust in Political Officials
 
+
+
 ```{r}
 prison_data <- read_csv(
   here::here("incarcerated_survey_2019.csv")
@@ -102,10 +110,10 @@ prison_data <- prison_data |>
   ) |>
   drop_na(how_often_officials_acting_in_your_interest, length_in_this_facility) 
 
-ggplot(prison_data, aes(x = cj_important_issue_restoring_voting_rights)) +
+ggplot(prison_data, aes(x = how_often_officials_acting_in_your_interest)) +
   geom_bar(fill = "blue") +
   labs(
-    x = "Should Incarcerated People be Allowed to Vote Regardless of Crime",
+    x = "How often are officials acting in your interest",
     y = "Count"
   ) +
    theme_minimal() +
@@ -113,6 +121,8 @@ ggplot(prison_data, aes(x = cj_important_issue_restoring_voting_rights)) +
 
 
 ```
+
+
 
 ## Regression Equation
 
@@ -122,6 +132,8 @@ $$
 
 ## Results {.smaller}
 
+
+
 ```{r}
 prison_data <- read_csv(
   here::here("incarcerated_survey_2019.csv")
@@ -130,7 +142,7 @@ prison_data <- read_csv(
   
 prison_cleaned <- prison_data |>
   filter(!is.na(length_in_this_facility)) |>
-  filter(!is.na(should_incarcerated_vote)) 
+  filter(!is.na(incarceration_impacts_motivation_to_vote)) 
 
 
 prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_facility == "10 years or less", 0, 1)
@@ -171,7 +183,7 @@ prison_cleaned <- prison_cleaned %>%
 
 unique(prison_cleaned$party)
 
-mod <- lm(should_incarcerated_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + party, data = prison_cleaned)
+mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + party, data = prison_cleaned)
 
 #mod_1 <- lm(how_often_officials_acting_in_your_interest ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age, data = prison_cleaned)
 
@@ -200,7 +212,11 @@ modelsummary(mod,
 ## add party identification
 ```
 
+
+
 ## Results
+
+
 
 ```{r}
 library(marginaleffects)
@@ -217,6 +233,8 @@ p <- plot_predictions(mod, condition = "length_in_this_facility") +
 p
 ```
 
+
+
 ## Conclusion
 
 -   There is a relationship between low motivation to vote and time in prison, but unlike I predicted that relationship is among those who have spent 10 years or less in prison (who make up the majority of the sample)
@@ -229,11 +247,15 @@ p
 
 ## Appendix {.smaller}
 
+
+
 ```{r}
 mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + ever_voted + identifies_as_hispanic_or_latinx + identifies_as_black + age + party, data = prison_cleaned)
 
 summary(mod)
 ```
+
+
 
 ## Sources
 
@@ -241,3 +263,4 @@ summary(mod)
 
 Lewis, Nicole, et al. “We Asked 8,000 Incarcerated People What They Think about Politics.” The Marshall Project, The Marshall Project, 11 Mar. 2020,\
 www.themarshallproject.org/2020/03/11/what-do-we-really-know-about-the-politics-of-people-behind-bars
+
