@@ -92,6 +92,8 @@ prison_data <- read_csv(
 ) |>
   drop_na()
 
+table(prison_data$incarceration_impacts_motivation_to_vote)
+
 prison_data <- prison_data |>
   mutate(
     how_often_officials_acting_in_your_interest = case_when(
@@ -102,7 +104,7 @@ prison_data <- prison_data |>
   ) |>
   drop_na(how_often_officials_acting_in_your_interest, length_in_this_facility) 
 
-ggplot(prison_data, aes(x = cj_important_issue_restoring_voting_rights)) +
+ggplot(prison_data, aes(x = should_incarcerated_vote)) +
   geom_bar(fill = "blue") +
   labs(
     x = "Should Incarcerated People be Allowed to Vote Regardless of Crime",
