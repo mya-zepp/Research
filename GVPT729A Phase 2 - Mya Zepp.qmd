@@ -1,34 +1,66 @@
 ---
-title: "Phase 2 Data Analysis - Mya Zepp"
-format: html
+title: ""
+format: 
+  pdf:
+    tbl-pos: "H"
+    fontsize: 12pt
+    linestretch: 2 
+    mainfont: "Times New Roman"
+    margin-bottom: 1in
+    margin-top: 1in
+    margin-left: 1in
+    margin-right: 1in
+    keep-tex: true
+    include-in-header:
+      text: |
+        % Required by modelsummary/tabularray
+        \usepackage{tabularray}
+        \usepackage{float}
+        \usepackage{graphicx}
+        \usepackage{codehigh}
+        \usepackage[normalem]{ulem}
+        \UseTblrLibrary{booktabs}
+        \UseTblrLibrary{siunitx}
 editor: visual
 ---
 
-## **GVPT 729A: Phase 2 Guidelines for Preliminary Results Assignment**
+\begin{center}
 
-## 1) A clear definition of the dependent variable with details on how it is measured and its source.
+GVPT 729A: Phase 2 Preliminary Results Assignment
 
-In 2020, the Marshall Project and Slate partnered to gather information on the politics of people behind bars. They conducted a voluntary survey of 8,000 incarcerated individuals across six states. The majority of respondents were white men in Kansas and Arkansas and thus not representative of the overall prison population. Thus, any conclusions drawn from the data are only truly generalizable to white incarcerated people in Republican states. The methods used in conducting this survey are another area of interest. The surveyors had no direct contact with prisons or imprisoned people; rather, they conducted their research through a tablet company that provides tablets to incarcerated people. The survey was given to this company and then sent to the tablets assigned to individual people. The Marshall Project and Slate are journalistic in nature, so they had no reason to go through IRB or conduct research directly with the prisons, but it does raise questions as to if this data would be different if they had. That being said, this data is the first of its kind and opens doors for future explorations.
+Mya Zepp
 
-Using this data, I explore the answer provided to the question "What impact has incarceration had on your motivation to vote?" to which respondents answered 'increased my motivation to vote', 'slightly increased my motivation to vote', 'decreased my motivation to vote', 'slightly decreased my motivation to vote,' or 'no impact.' For the purposes of this analysis, I excluded 'no impact' (n = 996). I compare the results of this question to the length of time the respondents have spent incarcerated, which is coded as '10 years or less' and 'more than 10 years'
+October 27, 2025
 
-## 2) A clear statement the main hypothesis(es) - if there are more than two discuss this with me before handing anything in. Included here should be a clear definition of the independent variables mentioned in the hypotheses and an indication of how they are measured.
+\end{center}
+
+\pagebreak
+
+In 2020, the Marshall Project and Slate partnered to gather information on the politics of people behind bars. They conducted a voluntary survey of 8,000 incarcerated individuals across six states. The majority of respondents were white men in Kansas and Arkansas, and thus not representative of the overall prison population. As such, any conclusions drawn from the data are only truly generalizable to white incarcerated men in Republican states. The methods used in conducting this survey are another area of interest. The surveyors had no direct contact with prisons or imprisoned people; rather, they conducted their research through a tablet company that provides tablets to incarcerated people. The survey was given to this company and then sent to the tablets assigned to individual people.
+
+Using this data, I explore the answer provided to the question "What impact has incarceration had on your motivation to vote?" to which respondents answered, 'increased my motivation to vote', 'slightly increased my motivation to vote', 'decreased my motivation to vote', 'slightly decreased my motivation to vote,' or 'no impact.' For the purposes of this analysis, I excluded 'no impact' (n = 996). I compare the results of this question to the length of time the respondents have spent incarcerated, which is coded as '10 years or less' and 'more than 10 years'
+
+Previous research in the field of incarceration and politics has had mixed opinions on the impact of the prison industrial complex on voting. One study indicated that any interaction with the carceral state, even a traffic ticket, can lead to decreased voter turnout (Weaver and Lerman, 2010) while another suggests that incarceration causes no real change in civic participation (Gerber et al., 2017) and a minority of research argues, as I will, that some people may in fact be mobilized by interactions with the carceral state (Walker, 2020). The data I plan to explore examines the impact of incarceration on 'motivation,' not participation. As such, we cannot make inferences on how these same respondents will participate, but I hypothesize, similar to Hannah Walker, that spending more than 10 years in prison will positively impact motivation to vote ($H_1$). In the analysis that follows I examine these variables through a cross tabulation and through an OLS regression model. In future analysis I plan to use binary logit to further explore the relationship and I plan to include controls for race, party identification, age, and having voted in the past.
+
+Preliminary analysis of the variables demonstrates a relationship that supports my hypothesis. The cross-tabulation of responses shows that among respondents who have spent 10 years or less incarcerated, 45.8% stated their motivation to vote increased, and respondents who have spent more than 10 years incarcerated had similar results, with 58.8% stating their motivation to vote increased. Length in facility demonstrates that spending 10 years or more in prison is associated with an increase in motivation to vote compared to those who have spent less than 10 years in prison. This result is in line with the argument that “a pivotal factor connecting experiences with the criminal justice system to political mobilization is a sense of systemic injustice.” (Walker, 2020, p. 6) This association could be a result of more time spent considering the implications of the prison-industrial complex, resulting in a stronger desire to participate politically. It is also possible that losing the right to vote makes one have a stronger desire to vote once they get that right back.
+
+The data suggests that motivation to vote may be high among incarcerated people, demonstrating that the conventional wisdom suggesting that previously incarcerated people are not participating in politics due to a lack of information may very well be true because based on this data, it is not due to a lack of motivation.
+
+\pagebreak
+
+## Appendix
 
 $H_0$: Spending 10 years or more in prison will negatively impact or not impact motivation to vote
 
 $H_1$: Spending 10 years or more in prison will positively impact motivation to vote
 
-## 3) Discussion of the relationship between the primary independent variable(s) and the dependent variable.  Here, based on the nature of the measurement of the dependent variable and the independent variables I expect you to explain what the best way to get a handle on this relationship is in the bivariate case and to display in graphical and/or tabular form the results (professionally formatted as always). There might be several ways that are all pretty good; if that is the case say so, explaining why there isn’t one single best approach, and discuss just one or two approaches (depending on how much space you have) and place the other graphs or tables in an appendix (as always, these too should be formatted professionally as if they were to appear in an academic journal). You should also make sure that the variables of primary interest will not cause problems with respect to model identification. If this can be seen from the results you present be sure to note whether the evidence suggests problems or not; if the presentation method you selected as best does not naturally reveal information of this sort, perform the appropriate test, report the results in a footnote and include the relevant table(s) or graph(s) in the appendix.
-
-## 4) An appendix with a table of descriptive statistics for the dependent variable and the primary independent variables, formatted as usual - just present the table with the sample size, mean, standard deviation, minimum, and maximum.
-
 ```{r}
 #| echo: false
 
+
 library(usmap)
 library(leaflet)
-library(here)
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(ggplot2)
 library(broom)
 library(usmap)
@@ -36,45 +68,17 @@ library(modelsummary)
 library(ggpattern)
 
 
+
+#suppressPackageStartupMessages(library(conflicted))
+#conflicts_prefer(dplyr::filter)
+
 prison_data <- read_csv(
-  here("incarcerated_survey_2019.csv"),
+  "C:/Users/mzepp/Downloads/School/R/Research/incarcerated_survey_2019.csv",
   show_col_types = FALSE
 ) |>
   drop_na()
 
-prison_cleaned <- prison_data |>
-  filter(!is.na(length_in_this_facility)) |>
-  filter(!is.na(incarceration_impacts_motivation_to_vote)) 
-table(prison_cleaned$incarceration_impacts_motivation_to_vote)
-table(prison_cleaned$length_in_this_facility)
 
-```
-
-## 5) Do the write-up (i.e. numbers 1-3 above) in no more than 2 double spaced pages with 12 point font, and 1 inch margins - you can have a separate page with your name etc. to save space for the write-up. Be sure to answer the following key question: Is there support for your hypothesis(es) based on your bivariate analysis? Put the tables and/or graphs that you discuss on separate pages (these do not count against the 2 page limit for text).
-
-## Appendix
-
-```{r}
-#| echo: false
-
-
-library(usmap)
-library(leaflet)
-library(here)
-library(tidyverse)
-library(ggplot2)
-library(broom)
-#library(dplyr)
-library(usmap)
-library(modelsummary)
-library(ggpattern)
-
-
-prison_data <- read_csv(
-  here("incarcerated_survey_2019.csv"),
-  show_col_types = FALSE
-) |>
-  drop_na()
 
 prison_cleaned <- prison_data |>
   filter(!is.na(length_in_this_facility)) |>
@@ -102,21 +106,56 @@ prison_cleaned <- prison_cleaned %>%
       length_in_this_facility == 1 ~ "More than 10 years",
       length_in_this_facility == 0 ~ "10 years or less"
     )
-  ) |>
-  rename(
+  ) |> 
+     rename(
     `Time incarcerated` = length_label,
     `Motivation to vote` = incarceration_motivation_label
   )
 
 
-datasummary_crosstab(`Time incarcerated` ~ `Motivation to vote`, 
-                     data = prison_cleaned,)
+```
+
+#### Summary: Incarceration Impact on Motivation to Vote
+
+```{r}
+#| echo: false
+
+summary(prison_cleaned$incarceration_impacts_motivation_to_vote)
+
+```
+
+#### Summary: Time Spent in Prison
+
+```{r}
+#| echo: false
+
+summary(prison_cleaned$length_in_this_facility)
+
+```
+
+\begin{table}[H]
+
+```{r}
+#| echo: false
+#| tbl-pos: "H"
+
+
+options("modelsummary_format_numeric_latex" = "plain")
+
+
+datasummary_crosstab(`Time incarcerated` ~ `Motivation to vote`, data = prison_cleaned, title ="Time Incarcerated and Voting Motivation", output = "latex")
+
+```
+
+```{r}
+#| echo: false
+#| tbl-pos: "H"
                      
 
 mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility, data = prison_cleaned)
 
 modelsummary(mod,
-             title = "Impact of Time Incarcerated on Voting Motivation",
+             title = "Time Incarcerated Regressed on Voting Motivation",
              coef_map = c(
                "length_in_this_facility" = "Length in Facility"
            ),
@@ -126,3 +165,5 @@ modelsummary(mod,
           
 )
 ```
+
+\end{table}[H]
