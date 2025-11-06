@@ -2,7 +2,6 @@
 title: ""
 format: 
   pdf:
-    tbl-pos: "H"
     fontsize: 12pt
     linestretch: 2 
     mainfont: "Times New Roman"
@@ -45,8 +44,6 @@ Previous research in the field of incarceration and politics has had mixed opini
 Preliminary analysis of the variables demonstrates a relationship that supports my hypothesis. The cross-tabulation of responses shows that among respondents who have spent 10 years or less incarcerated, 45.8% stated their motivation to vote increased, and respondents who have spent more than 10 years incarcerated had similar results, with 58.8% stating their motivation to vote increased. Length in facility demonstrates that spending 10 years or more in prison is associated with an increase in motivation to vote compared to those who have spent less than 10 years in prison. This result is in line with the argument that “a pivotal factor connecting experiences with the criminal justice system to political mobilization is a sense of systemic injustice.” (Walker, 2020, p. 6) This association could be a result of more time spent considering the implications of the prison-industrial complex, resulting in a stronger desire to participate politically. It is also possible that losing the right to vote makes one have a stronger desire to vote once they get that right back.
 
 The data suggests that motivation to vote may be high among incarcerated people, demonstrating that the conventional wisdom suggesting that previously incarcerated people are not participating in politics due to a lack of information may very well be true because based on this data, it is not due to a lack of motivation.
-
-\pagebreak
 
 ## Appendix
 
@@ -93,13 +90,13 @@ prison_cleaned$length_in_this_facility <- ifelse(prison_cleaned$length_in_this_f
 
 prison_cleaned <- prison_cleaned %>%
   mutate(incarceration_impacts_motivation_to_vote = case_when(
-    incarceration_impacts_motivation_to_vote %in% c("Increased my motivation to vote", "Slightly increased my motivation to vote") ~ 1, incarceration_impacts_motivation_to_vote %in% c("Decreased my motivation to vote",  "Slightly decreased my motivation to vote") ~ 0
+    incarceration_impacts_motivation_to_vote %in% c("Increased my motivation to vote", "Slightly increased my motivation to vote") ~ 1, incarceration_impacts_motivation_to_vote %in% c("Decreased my motivation to vote",  "Slightly decreased my motivation to vote", "no impact") ~ 0
   )) 
 
 prison_cleaned <- prison_cleaned %>%
   mutate(incarceration_motivation_label = case_when(
     incarceration_impacts_motivation_to_vote == 1 ~ "Increased motivation",
-    incarceration_impacts_motivation_to_vote == 0 ~ "Decreased motivation"
+    incarceration_impacts_motivation_to_vote == 0 ~ "Decreased motivation/No change"
   )) |>
   mutate(
     length_label = case_when(
@@ -128,31 +125,14 @@ summary(prison_cleaned$incarceration_impacts_motivation_to_vote)
 
 ```{r}
 #| echo: false
+#| 
 
 summary(prison_cleaned$length_in_this_facility)
 
-```
-
-\begin{table}[H]
-
-```{r}
-#| echo: false
-#| tbl-pos: "H"
-
-
-options("modelsummary_format_numeric_latex" = "plain")
-
-
-datasummary_crosstab(`Time incarcerated` ~ `Motivation to vote`, data = prison_cleaned, title ="Time Incarcerated and Voting Motivation", output = "latex")
-
-```
-
-```{r}
-#| echo: false
-#| tbl-pos: "H"
-                     
 
 mod <- lm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility, data = prison_cleaned)
+
+options("modelsummary_format_numeric_latex" = "plain")
 
 modelsummary(mod,
              title = "Time Incarcerated Regressed on Voting Motivation",
@@ -164,6 +144,9 @@ modelsummary(mod,
            
           
 )
-```
 
-\end{table}[H]
+
+
+datasummary_crosstab(`Time incarcerated` ~ `Motivation to vote`, data = prison_cleaned, title ="Time Incarcerated and Voting Motivation", output = "latex")
+
+```
