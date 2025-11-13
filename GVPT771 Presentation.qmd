@@ -182,9 +182,9 @@ modelsummary(mod,
              coef_map = c(
                "length_in_this_facility" = "Length in Facility",
                "ever_voted" = "Voted in the past",
-               #"identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
-              # "identifies_as_black" = "Black",
-              # "age" = "Age",
+               "identifies_as_hispanic_or_latinx" = "Hispanic/Latinx",
+               "identifies_as_black" = "Black",
+               "age" = "Age",
                "how_often_officials_acting_in_your_interest" = "Politicians are acting in your interest",
                "party" = "Party"
              ),

@@ -1,51 +1,4 @@
----
-title: " "
-format: 
-  pdf: 
-    fontsize: 12pt
-    linestretch: 2 
-    mainfont: "Times New Roman"
-    margin-bottom: 1in
-    margin-top: 1in
-    margin-left: 1in
-    margin-right: 1in
-    keep-tex: true
-    include-in-header:
-      text:  |
-        % Required by modelsummary/tabularray
-        \usepackage{tabularray}
-        \usepackage{float}
-        \usepackage{graphicx}
-        \usepackage{codehigh}
-        \usepackage[normalem]{ulem}
-        \UseTblrLibrary{booktabs}
-        \UseTblrLibrary{siunitx}
-editor: visual
----
-
-\begin{center}
-
-GVPT 729A: Phase 3 
-
-Mya Zepp
-
-October 27, 2025
-
-\end{center}
-
-\pagebreak
-
-$H_1$ spending more than 10 years in prison will positively impact motivation to vote
-
-## 4) Write a report that states the main hypothesis (if there is more than 1, just pick 1 hypothesis), discusses the nature of the dependent variable, discusses the model used, and discusses the support for your hypothesis. The report should be no more than 2 double spaced pages with 12 point font, and 1 inch margins - you can have a separate page with your name etc. to save space for the write-up. Put the tables and/or graphs that you discuss on separate pages (these do not count against the 2 page limit for text). substantive significance
-
-\pagebreak
-
-## Appendix
-
-```{r}
-#| echo: false
-#Slide 1
+#packages
 library(haven)
 library(dplyr)
 library(mvtnorm)  
@@ -63,6 +16,8 @@ library(modelsummary)
 library(ggpattern)
 suppressPackageStartupMessages(library(mvtnorm))
 
+
+#load data and clean the variables of interest
 
 prison_data <- read_csv(
   "C:/Users/mzepp/Downloads/School/R/Research/incarcerated_survey_2019.csv",
@@ -126,14 +81,13 @@ prison_cleaned <- prison_cleaned %>%
       length_in_this_facility == 0 ~ "10 years or less"
     )
   ) |> 
-     rename(
+  rename(
     `Time incarcerated` = length_label,
     `Motivation to vote` = incarceration_motivation_label
   )
 
-#probit.model <- glm(`Time incarcerated` ~ `Motivation to vote`, family=binomial(link="probit"), data=prison_cleaned)
 
-##probit.model <- glm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + identifies_as_black  + identifies_as_hispanic_or_latinx + ever_voted + party + age*length_in_this_facility, family = binomial(link = "probit"),data = prison_cleaned)
+# Step 1: run the model 
 
 probit.model <- glm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + identifies_as_black  + identifies_as_hispanic_or_latinx + ever_voted + party, 
                     family = binomial(link = "probit"),
@@ -156,20 +110,21 @@ modelsummary(probit.model,
              stars = TRUE,
              gof_map = c("nobs", "r.squared"),
              output = "latex"
-      
-          
+             
+             
 )
 
+#Step 2: Baseline 
 
-# y = motivation 
-# x = time 
-
-preds <- predict(probit.model, type = "response")
+preds_baseline <- predict(probit.model, type = "response")
 summary(preds)
 
 
 coefs_probit <- coef(probit.model)
 coefs_probit
+
+
+#Step 3: predicted outcome
 
 pprobit <- pnorm(coefs_probit[2]*prison_cleaned$length_in_this_facility + coefs_probit[3]*prison_cleaned$identifies_as_black + coefs_probit[4]*prison_cleaned$identifies_as_hispanic_or_latinx + coefs_probit[5]*prison_cleaned$ever_voted + coefs_probit[6]*prison_cleaned$party + coefs_probit[1])
 summary(pprobit)
@@ -185,31 +140,61 @@ px1_0 <- pnorm(coefs_probit[2]*0 + coefs_probit[3]*prison_cleaned$identifies_as_
 
 summary(px1_0)
 
+#Step 4: Effect
 
 effectx1 <- px1_1 - px1_0
 
 
 summary(cbind(px1_1, px1_0, effectx1))
 
-# the effect of length in facility is 1.2 percentage points
+#Make a nice table here. Substantive Significance? 
 
-```
+df1 <- tibble(
+  `Baseline`   = preds_baseline,
+  `Time Incarcerated = 0`   = px1_0,
+  `Time Incarcerated = 1`  = px1_1,
+  `Avg difference (0 − 1)`   = effectx1
+)
 
-```{r}
-#| echo: false
 
-#Simulation
+order_levels <- c(
+  "Baseline",
+  "Time Incarcerated = 0",
+  "Time incarcerated = 1",
+  "Avg difference (0 − 1)"
+)
 
-options("modelsummary_format_numeric_latex" = "plain")
+
+stats_tbl <- df1 |>
+  pivot_longer(everything(), names_to = "Quantity", values_to = "value") |>
+  group_by(Quantity) |>
+  summarise(
+    Mean   = mean(value, na.rm = TRUE),
+    .groups = "drop"
+  ) |> 
+  dplyr::mutate(Quantity = factor(Quantity, levels = order_levels)) |>
+  dplyr::arrange(Quantity)
+stats_tbl
+gt_tbl <-
+  stats_tbl |>
+  gt(rowname_col = "Quantity") |>
+  tab_header(
+    title = md("**Table 2. Summary of predicted probabilities**")
+  ) |>
+  tab_options(table.width = pct(80))
+
+gt_tbl
+
+
+#Step 6: Simulation 
 
 m1 <- glm(incarceration_impacts_motivation_to_vote ~ length_in_this_facility + identifies_as_black  + identifies_as_hispanic_or_latinx + ever_voted + party, 
-                    family = binomial(link = "probit"),
-                    data = prison_cleaned)
+          family = binomial(link = "probit"),
+          data = prison_cleaned)
 summary(m1)
 
 coefs <- coef(m1)
 coefs
-
 
 d <- prison_cleaned[complete.cases(prison_cleaned),]
 
@@ -224,12 +209,15 @@ colnames(sim_coefs)
 
 rbind(coefs, apply(sim_coefs, 2, mean)) 
 
-p_mean <- NULL
+p_mean_baseline <- NULL
 for (i in 1:1000) {
-  p_mean[i] <- mean(pnorm(sim_coefs[i,1] + sim_coefs[i,2]*d$length_in_this_facility + sim_coefs[i,3]*d$identifies_as_black + sim_coefs[i,4]*d$identifies_as_hispanic_or_latinx + sim_coefs[i,5]*d$ever_voted + sim_coefs[i,6]*d$party))
+  p_mean_baseline[i] <- mean(pnorm(sim_coefs[i,1] + sim_coefs[i,2]*d$length_in_this_facility + sim_coefs[i,3]*d$identifies_as_black + sim_coefs[i,4]*d$identifies_as_hispanic_or_latinx + sim_coefs[i,5]*d$ever_voted + sim_coefs[i,6]*d$party))
 }
 
-summary(p_mean)
+summary(p_mean_baseline)
+
+
+#Step 7
 
 px1_1_mean <- NULL
 for (i in 1:1000) {
@@ -242,8 +230,13 @@ for (i in 1:1000) {
   px1_0_mean[i] <- mean(pnorm(sim_coefs[i,1] + sim_coefs[i,2]*0 + sim_coefs[i,3]*d$identifies_as_black + sim_coefs[i,4]*d$identifies_as_hispanic_or_latinx + sim_coefs[i,5]*d$ever_voted + sim_coefs[i,6]*d$party))
 }
 
+#Step 8
+
 effectx1_mean <- px1_1_mean - px1_0_mean
 summary(effectx1_mean)
+
+
+#Step 9 
 
 margeffx2_mean <- NULL
 for (i in 1:1000) {
@@ -254,29 +247,25 @@ lapply(means <- list(p_mean, px1_1_mean, px1_0_mean, effectx1_mean, margeffx2_me
 
 
 q <- do.call("rbind", (lapply(means, quantile, c(.025,.975)))) 
-#q                                                              
+q                                                              
 
 results.p <- cbind(q[,1], lapply(means, mean),q[,2]) 
 colnames(results.p) <- c("2.5", "Mean", "97.5") 
 rownames(results.p) <- c("p_mean", "px1_1_mean", "px1_0_mean", "effectx1_mean", "margeffx2_mean") 
 results.p
 
-as.dataframe <- results.p
-```
 
-```{r}
-#Table 3 
-
+#Table 3
 ci_tbl <-
   as.data.frame(results.p) |>
   rownames_to_column("Quantity") |>
   rename(`2.5%` = `2.5`, `97.5%` = `97.5`) |>
   mutate(
     Quantity = recode( Quantity,
-      p_mean = "Baseline",
-      px1_0_mean       = "Time Incarcerated = 0",
-      px1_1_mean      = "Time Incarcerated = 1",
-      effectx1_mean   = "Avg difference (0 − 1)"
+                       p_mean = "Baseline",
+                       px1_0_mean       = "Time Incarcerated = 0",
+                       px1_1_mean      = "Time Incarcerated = 1",
+                       effectx1_mean   = "Avg difference (0 − 1)"
     ),
     Quantity = factor(
       Quantity,
@@ -305,4 +294,4 @@ gt_tbl <-
   tab_options(table.width = pct(75))
 
 gt_tbl
-```
+

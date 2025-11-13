@@ -1,0 +1,317 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  12pt,
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+    \setmainfont[]{Times New Roman}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[lmargin=1in,rmargin=1in,tmargin=1in,bmargin=1in]{geometry}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{float}
+\usepackage{tabularray}
+\usepackage[normalem]{ulem}
+\usepackage{graphicx}
+\usepackage{rotating}
+\UseTblrLibrary{booktabs}
+\UseTblrLibrary{siunitx}
+\NewTableCommand{\tinytableDefineColor}[3]{\definecolor{#1}{#2}{#3}}
+\newcommand{\tinytableTabularrayUnderline}[1]{\underline{#1}}
+\newcommand{\tinytableTabularrayStrikeout}[1]{\sout{#1}}
+% Required by modelsummary/tabularray
+\usepackage{tabularray}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{codehigh}
+\usepackage[normalem]{ulem}
+\UseTblrLibrary{booktabs}
+\UseTblrLibrary{siunitx}
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\author{}
+\date{}
+
+\begin{document}
+
+
+\setstretch{2}
+\begin{center}
+
+GVPT 729A: Phase 3 
+
+Mya Zepp
+
+October 27, 2025
+
+\end{center}
+
+\pagebreak
+
+\(H_1\) spending more than 10 years in prison will positively impact
+motivation to vote
+
+\subsection{4) Write a report that states the main hypothesis (if there
+is more than 1, just pick 1 hypothesis), discusses the nature of the
+dependent variable, discusses the model used, and discusses the support
+for your hypothesis. The report should be no more than 2 double spaced
+pages with 12 point font, and 1 inch margins - you can have a separate
+page with your name etc. to save space for the write-up. Put the tables
+and/or graphs that you discuss on separate pages (these do not count
+against the 2 page limit for text). substantive
+significance}\label{write-a-report-that-states-the-main-hypothesis-if-there-is-more-than-1-just-pick-1-hypothesis-discusses-the-nature-of-the-dependent-variable-discusses-the-model-used-and-discusses-the-support-for-your-hypothesis.-the-report-should-be-no-more-than-2-double-spaced-pages-with-12-point-font-and-1-inch-margins---you-can-have-a-separate-page-with-your-name-etc.-to-save-space-for-the-write-up.-put-the-tables-andor-graphs-that-you-discuss-on-separate-pages-these-do-not-count-against-the-2-page-limit-for-text.-substantive-significance}
+
+\pagebreak
+
+\subsection{Appendix}\label{appendix}
+
+\begin{verbatim}
+Warning: package 'mvtnorm' was built under R version 4.5.1
+\end{verbatim}
+
+\begin{verbatim}
+Warning: To compile a LaTeX document with this table, the following commands must be placed in the document preamble:
+
+\usepackage{tabularray}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{codehigh}
+\usepackage[normalem]{ulem}
+\UseTblrLibrary{booktabs}
+\UseTblrLibrary{siunitx}
+\newcommand{\tinytableTabularrayUnderline}[1]{\underline{#1}}
+\newcommand{\tinytableTabularrayStrikeout}[1]{\sout{#1}}
+\NewTableCommand{\tinytableDefineColor}[3]{\definecolor{#1}{#2}{#3}}
+
+To disable `siunitx` and prevent `modelsummary` from wrapping numeric entries in `\num{}`, call:
+
+options("modelsummary_format_numeric_latex" = "plain")
+ This warning appears once per session.
+\end{verbatim}
+
+\begin{table}
+\centering
+\begin{talltblr}[         %% tabularray outer open
+caption={Impact of Incarceration on Voting Motivation},
+note{}={+ p \num{< 0.1}, * p \num{< 0.05}, ** p \num{< 0.01}, *** p \num{< 0.001}},
+]                     %% tabularray outer close
+{                     %% tabularray inner open
+colspec={Q[]Q[]},
+column{2}={}{halign=c,},
+column{1}={}{halign=l,},
+hline{12}={1,2}{solid, black, 0.05em},
+}                     %% tabularray inner close
+\toprule
+& (1) \\ \midrule %% TinyTableHeader
+Length in Facility & \num{0.320}* \\
+& (\num{0.126}) \\
+Voted in the past & \num{0.204}* \\
+& (\num{0.085}) \\
+Black & \num{0.374}** \\
+& (\num{0.131}) \\
+Hispanic/Latino & \num{-0.035} \\
+& (\num{0.371}) \\
+Party & \num{-0.221}*** \\
+& (\num{0.047}) \\
+Num.Obs. & \num{1306} \\
+\bottomrule
+\end{talltblr}
+\end{table}
+
+\begin{verbatim}
+     px1_1            px1_0           effectx1      
+ Min.   :0.7908   Min.   :0.6877   Min.   :0.04271  
+ 1st Qu.:0.8527   1st Qu.:0.7667   1st Qu.:0.05648  
+ Median :0.9006   Median :0.8328   Median :0.06784  
+ Mean   :0.8799   Mean   :0.8063   Mean   :0.07360  
+ 3rd Qu.:0.9249   3rd Qu.:0.8684   3rd Qu.:0.08596  
+ Max.   :0.9498   Max.   :0.9071   Max.   :0.10312  
+\end{verbatim}
+
+\begin{verbatim}
+      (Intercept) length_in_this_facility identifies_as_black
+coefs   0.9653169               0.3199143           0.3743619
+        0.9614730               0.3193727           0.3797196
+      identifies_as_hispanic_or_latinx ever_voted      party
+coefs                      -0.03488194  0.2040345 -0.2206113
+                           -0.04421896  0.2062134 -0.2194431
+\end{verbatim}
+
+\begin{verbatim}
+[[1]]
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.7883  0.8144  0.8217  0.8214  0.8287  0.8543 
+
+[[2]]
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.7780  0.8661  0.8805  0.8796  0.8946  0.9397 
+
+[[3]]
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.7669  0.8004  0.8083  0.8078  0.8159  0.8437 
+
+[[4]]
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+-0.02154  0.05675  0.07248  0.07171  0.08840  0.13742 
+
+[[5]]
+      Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+-8.431e-03 -6.040e-04  8.205e-05  7.299e-05  8.988e-04  7.043e-03 
+\end{verbatim}
+
+\begin{verbatim}
+               2.5          Mean         97.5       
+p_mean         0.8004421    0.8213591    0.8410258  
+px1_1_mean     0.8356164    0.8795501    0.9184527  
+px1_0_mean     0.7848221    0.80784      0.8292576  
+effectx1_mean  0.01994066   0.07171011   0.1159228  
+margeffx2_mean -0.003811856 7.298659e-05 0.003358124
+\end{verbatim}
+
+
+
+
+\end{document}
