@@ -2,6 +2,7 @@
 title: " "
 format: 
   pdf: 
+    fig-pos: "H"
     fontsize: 12pt
     linestretch: 2 
     mainfont: "Times New Roman"

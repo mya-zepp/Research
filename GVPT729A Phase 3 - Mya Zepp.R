@@ -4,6 +4,7 @@ library(dplyr)
 library(mvtnorm)  
 library(gtsummary)
 library(broom)  
+library(broom.helpers)
 library(gt)
 library(tidyr)
 library(tibble)
@@ -85,7 +86,9 @@ prison_cleaned <- prison_cleaned %>%
     `Time incarcerated` = length_label,
     `Motivation to vote` = incarceration_motivation_label
   )
-
+prison_cleaned<-na.omit(prison_cleaned %>% select(incarceration_impacts_motivation_to_vote,
+                                  length_in_this_facility, identifies_as_black, identifies_as_hispanic_or_latinx, ever_voted, party
+                                  ))
 
 # Step 1: run the model 
 
@@ -96,29 +99,39 @@ probit.model <- glm(incarceration_impacts_motivation_to_vote ~ length_in_this_fa
 summary(probit.model)
 
 
-modelsummary(probit.model,
-             title = "Impact of Incarceration on Voting Motivation",
-             coef_map = c(
-               "length_in_this_facility" = "Length in Facility",
-               "ever_voted" = "Voted in the past",
-               "identifies_as_black" = "Black",
-               "identifies_as_hispanic_or_latinx" = "Hispanic/Latino",
-               "age" = "Age",
-               "how_often_officials_acting_in_your_interest" = "Politicians are acting in your interest",
-               "party" = "Party"
-             ),
-             stars = TRUE,
-             gof_map = c("nobs", "r.squared"),
-             output = "latex"
-             
-             
-)
+
+tbl <- tbl_regression(
+  probit.model,
+  intercept   = TRUE,
+  label = list(
+    "length_in_this_facility" = "Time in Facility",
+    "ever_voted" = "Voted in the past",
+    "identifies_as_black" = "Black",
+    "identifies_as_hispanic_or_latinx" = "Hispanic/Latino",
+    "ever_voted" = "Voted in the Past",
+    "party" = "Party"
+  ),
+  estimate_fun = ~ style_sigfig(.x, digits = 3),
+  pvalue_fun   = ~ style_pvalue(.x, digits = 3), 
+  conf.int = FALSE 
+) |>
+  bold_p(t = 0.05) |>                                   
+  italicize_levels() |>
+  modify_header(label ~ "**Characteristic**",
+                estimate ~ "**Beta**",
+                p.value ~ "**p-value**") |>
+  modify_caption("**Table 1: Probit Regression of Vote Motivation**") |>
+  as_gt() |>
+  tab_options(table.width = pct(70)) 
+
+tbl
+
 
 #Step 2: Baseline 
 
 preds_baseline <- predict(probit.model, type = "response")
-summary(preds)
-
+summary(preds_baseline)
+length(preds_baseline)
 
 coefs_probit <- coef(probit.model)
 coefs_probit
@@ -129,7 +142,7 @@ coefs_probit
 pprobit <- pnorm(coefs_probit[2]*prison_cleaned$length_in_this_facility + coefs_probit[3]*prison_cleaned$identifies_as_black + coefs_probit[4]*prison_cleaned$identifies_as_hispanic_or_latinx + coefs_probit[5]*prison_cleaned$ever_voted + coefs_probit[6]*prison_cleaned$party + coefs_probit[1])
 summary(pprobit)
 
-testp <- preds - pprobit
+testp <- preds_baseline - pprobit
 summary(testp)
 
 px1_1 <- pnorm(coefs_probit[2]*1 + coefs_probit[3]*prison_cleaned$identifies_as_black + coefs_probit[4]*prison_cleaned$identifies_as_hispanic_or_latinx + coefs_probit[5]*prison_cleaned$ever_voted + coefs_probit[6]*prison_cleaned$party + coefs_probit[1])
@@ -148,6 +161,8 @@ effectx1 <- px1_1 - px1_0
 summary(cbind(px1_1, px1_0, effectx1))
 
 #Make a nice table here. Substantive Significance? 
+library(tibble)
+
 
 df1 <- tibble(
   `Baseline`   = preds_baseline,
@@ -160,7 +175,7 @@ df1 <- tibble(
 order_levels <- c(
   "Baseline",
   "Time Incarcerated = 0",
-  "Time incarcerated = 1",
+  "Time Incarcerated = 1",
   "Avg difference (0 − 1)"
 )
 
@@ -175,15 +190,21 @@ stats_tbl <- df1 |>
   dplyr::mutate(Quantity = factor(Quantity, levels = order_levels)) |>
   dplyr::arrange(Quantity)
 stats_tbl
+
 gt_tbl <-
   stats_tbl |>
   gt(rowname_col = "Quantity") |>
-  tab_header(
-    title = md("**Table 2. Summary of predicted probabilities**")
+  fmt_number(
+    columns = where(is.numeric),   
+    decimals = 3                   
   ) |>
-  tab_options(table.width = pct(80))
+  tab_header(
+    title = md("**Table 2. Summary of Predicted Probabilities**")
+  ) |>
+  tab_options(table.width = pct(70))
 
 gt_tbl
+gtsave(gt_tbl, "table.png")
 
 
 #Step 6: Simulation 
@@ -195,6 +216,7 @@ summary(m1)
 
 coefs <- coef(m1)
 coefs
+
 
 d <- prison_cleaned[complete.cases(prison_cleaned),]
 
@@ -209,13 +231,12 @@ colnames(sim_coefs)
 
 rbind(coefs, apply(sim_coefs, 2, mean)) 
 
-p_mean_baseline <- NULL
+p_mean <- NULL
 for (i in 1:1000) {
-  p_mean_baseline[i] <- mean(pnorm(sim_coefs[i,1] + sim_coefs[i,2]*d$length_in_this_facility + sim_coefs[i,3]*d$identifies_as_black + sim_coefs[i,4]*d$identifies_as_hispanic_or_latinx + sim_coefs[i,5]*d$ever_voted + sim_coefs[i,6]*d$party))
+  p_mean[i] <- mean(pnorm(sim_coefs[i,1] + sim_coefs[i,2]*d$length_in_this_facility + sim_coefs[i,3]*d$identifies_as_black + sim_coefs[i,4]*d$identifies_as_hispanic_or_latinx + sim_coefs[i,5]*d$ever_voted + sim_coefs[i,6]*d$party))
 }
 
-summary(p_mean_baseline)
-
+summary(p_mean)
 
 #Step 7
 
@@ -261,6 +282,9 @@ ci_tbl <-
   rownames_to_column("Quantity") |>
   rename(`2.5%` = `2.5`, `97.5%` = `97.5`) |>
   mutate(
+    `2.5%` = as.numeric(`2.5%`),
+    Mean   = as.numeric(Mean),
+    `97.5%` = as.numeric(`97.5%`),
     Quantity = recode( Quantity,
                        p_mean = "Baseline",
                        px1_0_mean       = "Time Incarcerated = 0",
@@ -290,7 +314,8 @@ gt_tbl <-
     `2.5%`  = "Lower 95%",
     `97.5%` = "Upper 95%"
   ) |>
-  fmt_number(columns = c(`2.5%`, Mean, `97.5%`), decimals = 3) |>
+  fmt_number(columns = c(`2.5%`, Mean, `97.5%`), 
+             decimals = 3) |>
   tab_options(table.width = pct(75))
 
 gt_tbl
