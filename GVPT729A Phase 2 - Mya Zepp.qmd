@@ -66,20 +66,9 @@ library(ggpattern)
 
 
 
-#suppressPackageStartupMessages(library(conflicted))
-#conflicts_prefer(dplyr::filter)
-
-prison_data <- read_csv(
-  "C:/Users/mzepp/Downloads/School/R/Research/incarcerated_survey_2019.csv",
-  show_col_types = FALSE
-) |>
-  drop_na()
 
 
 
-prison_cleaned <- prison_data |>
-  filter(!is.na(length_in_this_facility)) |>
-  filter(!is.na(incarceration_impacts_motivation_to_vote)) 
 
 
 
@@ -109,23 +98,8 @@ prison_cleaned <- prison_cleaned %>%
     `Motivation to vote` = incarceration_motivation_label
   )
 
-
-```
-
-#### Summary: Incarceration Impact on Motivation to Vote
-
-```{r}
-#| echo: false
-
 summary(prison_cleaned$incarceration_impacts_motivation_to_vote)
 
-```
-
-#### Summary: Time Spent in Prison
-
-```{r}
-#| echo: false
-#| 
 
 summary(prison_cleaned$length_in_this_facility)
 
@@ -147,6 +121,23 @@ modelsummary(mod,
 
 
 
-datasummary_crosstab(`Time incarcerated` ~ `Motivation to vote`, data = prison_cleaned, title ="Time Incarcerated and Voting Motivation", output = "latex")
+datasummary_crosstab(`Time incarcerated` ~ `Motivation to vote`, data = prison_cleaned, title ="Time Incarcerated and Voting Motivation")
+```
+
+#### Summary: Incarceration Impact on Motivation to Vote
+
+```{r}
+#| echo: false
+
+
+```
+
+#### Summary: Time Spent in Prison
+
+```{r}
+#| echo: false
+#| 
+
+
 
 ```
